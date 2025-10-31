@@ -251,23 +251,23 @@ export default function ChatPage() {
       />
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col bg-background">
         {/* Header */}
-        <div className="border-b border-border bg-card px-6 py-4 flex items-center justify-between shadow-sm">
-          <div className="flex items-center gap-4">
+        <div className="border-b border-border bg-card px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+          <div className="flex items-center gap-3 sm:gap-4">
             {!sidebarOpen && (
               <button onClick={() => setSidebarOpen(true)} className="p-2 hover:bg-muted rounded-lg transition-colors">
-                <Menu className="w-5 h-5" />
+                <Menu className="w-5 h-5 text-muted-foreground" />
               </button>
             )}
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">CB</span>
               </div>
               <div>
-                <h1 className="text-lg font-semibold text-foreground">{currentConversation?.title || "Cool Buddy"}</h1>
+                <h1 className="text-base sm:text-lg font-semibold text-foreground">{currentConversation?.title || "Cool Buddy"}</h1>
                 {currentConversation?.isTemporary && (
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                     <Clock className="w-3 h-3" /> Temporary
                   </p>
                 )}
@@ -280,7 +280,7 @@ export default function ChatPage() {
               onClick={() => setShowHeaderMenu(!showHeaderMenu)}
               className="p-2 hover:bg-muted rounded-lg transition-colors"
             >
-              <MoreVertical className="w-5 h-5" />
+              <MoreVertical className="w-5 h-5 text-muted-foreground" />
             </button>
             {showHeaderMenu && (
               <ChatHeaderMenu
@@ -298,28 +298,35 @@ export default function ChatPage() {
         </div>
 
         {/* Messages Area */}
-        <ScrollArea className="flex-1 px-6 py-8">
-          <div className="max-w-4xl mx-auto space-y-6">
+        <ScrollArea className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-3xl mx-auto">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-96 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-4">
-                  <span className="text-white font-bold text-2xl">CB</span>
+              <div className="flex flex-col items-center justify-center h-[calc(100vh-250px)] text-center px-4">
+                <div className="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                  <span className="text-white font-bold text-4xl">AI</span>
                 </div>
-                <h2 className="text-3xl font-bold text-foreground mb-2">Hey there! I'm Cool Buddy</h2>
-                <p className="text-muted-foreground max-w-md">
-                  Ask me anything, upload files, or use voice to chat. Let's make conversations cool!
+                <h2 className="text-4xl font-bold text-foreground mb-3">Hey there!</h2>
+                <p className="text-muted-foreground max-w-md text-lg leading-relaxed">
+                  I'm your AI assistant. Ask me anything, upload files, or use voice to chat. Let's create something amazing!
                 </p>
               </div>
             ) : (
-              messages.map((message) => <ChatMessage key={message.id} message={message} />)
+              <div className="space-y-6">
+                {messages.map((message) => <ChatMessage key={message.id} message={message} />)}
+              </div>
             )}
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-muted rounded-2xl px-4 py-3">
-                  <div className="flex gap-2">
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce delay-200" />
+              <div className="flex justify-start mb-6">
+                <div className="flex items-start gap-3 max-w-3xl w-full">
+                  <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-xs font-bold text-white">AI</span>
+                  </div>
+                  <div className="bg-card border border-border rounded-2xl px-5 py-4 shadow-sm">
+                    <div className="flex gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100" />
+                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200" />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -332,13 +339,13 @@ export default function ChatPage() {
         {showFilePanel && <FileUploadPanel onClose={() => setShowFilePanel(false)} />}
 
         {/* Input Area */}
-        <div className="border-t border-border bg-card px-6 py-6 shadow-lg">
-          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto">
-            <div className="flex gap-3 items-end">
+        <div className="border-t border-border bg-card px-6 py-6">
+          <form onSubmit={handleSendMessage} className="max-w-3xl mx-auto">
+            <div className="flex gap-2 items-center bg-muted rounded-2xl px-4 py-3 border border-border focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
               <button
                 type="button"
                 onClick={() => setShowFilePanel(!showFilePanel)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground"
+                className="p-2 hover:bg-accent rounded-lg transition-colors text-muted-foreground"
               >
                 <Paperclip className="w-5 h-5" />
               </button>
@@ -347,7 +354,7 @@ export default function ChatPage() {
                 type="button"
                 onClick={handleVoiceInput}
                 className={`p-2 rounded-lg transition-colors ${
-                  isListening ? "bg-red-500 text-white" : "hover:bg-muted text-muted-foreground"
+                  isListening ? "bg-red-500 text-white" : "hover:bg-accent text-muted-foreground"
                 }`}
               >
                 <Mic className="w-5 h-5" />
@@ -356,17 +363,17 @@ export default function ChatPage() {
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Message Cool Buddy..."
+                placeholder="Ask me anything..."
                 disabled={!currentConversationId || isLoading}
-                className="flex-1 rounded-full bg-muted border-0 px-4 py-3 text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex-1 bg-transparent border-0 px-2 py-2 text-foreground placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
               />
               <Button
                 type="submit"
                 disabled={!input.trim() || !currentConversationId || isLoading}
                 size="icon"
-                className="rounded-full w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white"
+                className="rounded-xl w-11 h-11 bg-primary text-white hover:bg-primary/90 shadow-md transition-all"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               </Button>
             </div>
           </form>

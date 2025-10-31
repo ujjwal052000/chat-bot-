@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { useState, useRef, useEffect } from "react"
+import { Switch } from "@/components/ui/switch"
+import { useTheme } from "next-themes"
 
 interface Conversation {
   id: string
@@ -69,6 +71,14 @@ export default function Sidebar({
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
   const profileRef = useRef<HTMLDivElement>(null)
   const saveMenuRef = useRef<HTMLDivElement>(null)
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  const isDark = mounted && theme === 'dark';
 
   const filteredConversations = conversations.filter((conv) =>
     conv.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -143,16 +153,16 @@ export default function Sidebar({
   if (!isOpen) return null
 
   return (
-    <div className="w-72 border-r border-border bg-card flex flex-col shadow-lg">
+    <div className="w-72 border-r border-border bg-sidebar flex flex-col">
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+      <div className="p-5 border-b border-border flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">CB</span>
           </div>
-          <h2 className="font-bold text-foreground">Cool Buddy</h2>
+          <h2 className="font-bold text-foreground text-lg">Cool Buddy</h2>
         </div>
-        <button onClick={onToggle} className="p-1 hover:bg-muted rounded transition-colors">
+        <button onClick={onToggle} className="p-2 hover:bg-muted rounded-lg transition-colors">
           <X className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
@@ -161,7 +171,7 @@ export default function Sidebar({
       <div className="p-4 border-b border-border space-y-2">
         <Button
           onClick={() => onNewConversation(false)}
-          className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg flex items-center justify-center gap-2"
+          className="w-full bg-primary text-white hover:bg-primary/90 rounded-lg flex items-center justify-center gap-2 h-10 transition-all"
         >
           <Plus className="w-4 h-4" />
           New Chat
@@ -169,7 +179,7 @@ export default function Sidebar({
         <Button
           onClick={() => onNewConversation(true)}
           variant="outline"
-          className="w-full border-border text-foreground rounded-lg flex items-center justify-center gap-2 hover:bg-muted"
+          className="w-full border border-border text-foreground rounded-lg flex items-center justify-center gap-2 hover:bg-muted h-10 transition-all"
         >
           <Clock className="w-4 h-4" />
           Temporary Chat
@@ -179,12 +189,12 @@ export default function Sidebar({
       {/* Search Chat */}
       <div className="p-4 border-b border-border">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
           <Input
             placeholder="Search chats..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-muted border-0 rounded-lg text-sm text-foreground placeholder:text-muted-foreground"
+            className="pl-10 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary transition-all"
           />
         </div>
       </div>
@@ -203,11 +213,11 @@ export default function Sidebar({
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg transition-colors"
                   >
                     <ChevronRight
-                      className={`w-4 h-4 transition-transform ${
+                      className={`w-4 h-4 transition-transform text-muted-foreground ${
                         expandedCategories.has(category.id) ? "rotate-90" : ""
                       }`}
                     />
-                    <FolderOpen className="w-4 h-4" />
+                    <FolderOpen className="w-4 h-4 text-muted-foreground" />
                     <span className="font-medium">{category.name}</span>
                   </button>
 
@@ -229,13 +239,15 @@ export default function Sidebar({
                             <div
                               className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                                 currentConversationId === conv.id
-                                  ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
+                                  ? "bg-primary text-white"
                                   : "hover:bg-muted"
                               }`}
                             >
                               <button
                                 onClick={() => onSelectConversation(conv.id)}
-                                className="flex-1 text-left text-sm text-foreground truncate"
+                                className={`flex-1 text-left text-sm truncate ${
+                                  currentConversationId === conv.id ? "text-white" : "text-foreground"
+                                }`}
                               >
                                 {conv.title}
                               </button>
@@ -273,7 +285,7 @@ export default function Sidebar({
                                   onClick={() => onDeleteConversation(conv.id)}
                                   className="p-1 hover:bg-red-500/20 rounded transition-colors"
                                 >
-                                  <X className="w-3 h-3 text-red-500" />
+                                  <X className={`w-3 h-3 ${currentConversationId === conv.id ? "text-white" : "text-red-500"}`} />
                                 </button>
                               )}
                             </div>
@@ -298,13 +310,15 @@ export default function Sidebar({
                   <div
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                       currentConversationId === conv.id
-                        ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30"
+                        ? "bg-primary text-white"
                         : "hover:bg-muted"
                     }`}
                   >
                     <button
                       onClick={() => onSelectConversation(conv.id)}
-                      className="flex-1 text-left text-sm text-foreground truncate"
+                      className={`flex-1 text-left text-sm truncate ${
+                        currentConversationId === conv.id ? "text-white" : "text-foreground"
+                      }`}
                     >
                       {conv.title}
                     </button>
@@ -342,7 +356,7 @@ export default function Sidebar({
                         onClick={() => onDeleteConversation(conv.id)}
                         className="p-1 hover:bg-red-500/20 rounded transition-colors"
                       >
-                        <X className="w-3 h-3 text-red-500" />
+                        <X className={`w-3 h-3 ${currentConversationId === conv.id ? "text-white" : "text-red-500"}`} />
                       </button>
                     )}
                   </div>
@@ -362,7 +376,7 @@ export default function Sidebar({
               placeholder="Category name..."
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              className="mb-4 bg-muted border-0 rounded-lg text-foreground placeholder:text-muted-foreground"
+              className="mb-4 bg-background border-border"
               autoFocus
             />
             <div className="flex gap-2">
@@ -372,13 +386,13 @@ export default function Sidebar({
                   setCategoryName("")
                 }}
                 variant="outline"
-                className="flex-1 border-border text-foreground hover:bg-muted"
+                className="flex-1"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateCategory}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white"
+                className="flex-1 bg-primary text-white hover:bg-primary/90"
               >
                 Create
               </Button>
@@ -389,22 +403,35 @@ export default function Sidebar({
 
       {/* Footer - Profile, Library, Premium */}
       <div className="border-t border-border p-4 space-y-2">
-        <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg transition-colors">
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-muted rounded-lg transition-colors">
           <FolderOpen className="w-4 h-4" />
           Library
         </button>
 
-        <button className="w-full flex items-center gap-3 px-3 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-lg transition-colors">
+        <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-all">
           <Zap className="w-4 h-4" />
           Upgrade to Premium
         </button>
+
+        <div className="flex items-center justify-between pt-3 border-t border-border">
+          <span className="text-xs font-medium text-muted-foreground">Theme</span>
+          <div className="flex items-center gap-3">
+            {mounted && (
+              <Switch
+                checked={isDark}
+                onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+              />
+            )}
+            <span className="text-xs font-medium text-foreground min-w-[45px] text-right">{mounted ? (isDark ? "Dark" : "Light") : "..."}</span>
+          </div>
+        </div>
 
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => setShowProfile(!showProfile)}
             className="w-full flex items-center gap-3 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-lg transition-colors"
           >
-            <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-6 h-6 bg-muted rounded-full flex items-center justify-center text-foreground text-xs font-bold">
               U
             </div>
             <span className="flex-1 text-left">Profile</span>
