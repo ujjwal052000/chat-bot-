@@ -69,6 +69,13 @@ export default function ChatPage() {
     }
   }, [messages])
 
+  // Ensure there is an active conversation on first load
+  useEffect(() => {
+    if (!currentConversationId && conversations.length === 0) {
+      createNewConversation()
+    }
+  }, [])
+
   const createNewConversation = (isTemporary = false) => {
     const newId = Date.now().toString()
     const newConversation: Conversation = {
@@ -171,10 +178,29 @@ export default function ChatPage() {
     setInput("")
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
+        }),
+      })
+      let data: any = null
+      if (!res.ok) {
+        // Try to read error payload for better debugging in console
+        try {
+          data = await res.json()
+        } catch {
+          /* ignore */
+        }
+        console.error("/api/chat failed", res.status, data)
+        throw new Error(`API error: ${res.status}`)
+      }
+      data = await res.json()
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: `I received your message: "${input}". This is a demo response. In a real application, this would be connected to an AI API.`,
+        content: data.reply || "",
         role: "assistant",
         timestamp: new Date(),
         type: "text",
@@ -189,15 +215,24 @@ export default function ChatPage() {
             return {
               ...conv,
               messages: updatedMessages,
-              title: conv.title === "New conversation" ? input.slice(0, 30) : conv.title,
+              title: conv.title === "New conversation" ? userMessage.content.slice(0, 30) : conv.title,
             }
           }
           return conv
         }),
       )
-
+    } catch (error: any) {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "Sorry, I couldn't get a response right now.",
+        role: "assistant",
+        timestamp: new Date(),
+        type: "text",
+      }
+      setMessages([...newMessages, assistantMessage])
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
