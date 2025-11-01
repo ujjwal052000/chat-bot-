@@ -10,6 +10,7 @@ import ChatMessage from "@/components/chat-message"
 import Sidebar from "@/components/sidebar"
 import ChatHeaderMenu from "@/components/chat-header-menu"
 import FileUploadPanel from "@/components/file-upload-panel"
+import { clsx } from 'clsx';
 
 interface Message {
   id: string
@@ -235,6 +236,18 @@ export default function ChatPage() {
     }
   }
 
+  // Quick Reply Suggestions
+  const quickReplies = [
+    "Hello!",
+    "Show FAQs",
+    "Talk to a human",
+    "Pricing plans"
+  ];
+
+  const handleQuickReply = (msg: string) => {
+    setInput(msg);
+  };
+
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
@@ -253,19 +266,23 @@ export default function ChatPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-background">
         {/* Header */}
-        <div className="border-b border-border bg-card px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <div className="border-b border-border bg-card px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+          <div className="flex items-center gap-4">
             {!sidebarOpen && (
               <button onClick={() => setSidebarOpen(true)} className="p-2 hover:bg-muted rounded-lg transition-colors">
                 <Menu className="w-5 h-5 text-muted-foreground" />
               </button>
             )}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">CB</span>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-lg">CB</span>
               </div>
               <div>
                 <h1 className="text-base sm:text-lg font-semibold text-foreground">{currentConversation?.title || "Cool Buddy"}</h1>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+                  <span className="text-xs text-muted-foreground">Online</span>
+                </div>
                 {currentConversation?.isTemporary && (
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                     <Clock className="w-3 h-3" /> Temporary
@@ -313,27 +330,37 @@ export default function ChatPage() {
             ) : (
               <div className="space-y-6">
                 {messages.map((message) => <ChatMessage key={message.id} message={message} />)}
-              </div>
-            )}
-            {isLoading && (
-              <div className="flex justify-start mb-6">
-                <div className="flex items-start gap-3 max-w-3xl w-full">
-                  <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-xs font-bold text-white">AI</span>
-                  </div>
-                  <div className="bg-card border border-border rounded-2xl px-5 py-4 shadow-sm">
-                    <div className="flex gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100" />
-                      <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200" />
+                {/* Typing indicator when loading */}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="rounded-xl px-5 py-4 bg-card border border-border max-w-[80%] shadow-sm flex items-end gap-3">
+                      <div className="flex flex-row gap-1 items-center">
+                        <span className="block w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{animationDelay: '0ms'}}></span>
+                        <span className="block w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{animationDelay: '120ms'}}></span>
+                        <span className="block w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{animationDelay: '240ms'}}></span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
             <div ref={scrollRef} />
           </div>
         </ScrollArea>
+
+        {/* Quick Reply Suggestions */}
+        <div className="max-w-3xl mx-auto flex gap-2 flex-wrap px-4 pb-1">
+          {quickReplies.map((reply) => (
+            <button
+              key={reply}
+              type="button"
+              className="px-4 py-2 rounded-full bg-muted border border-border text-foreground text-sm hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary transition-colors duration-150 shadow-sm"
+              onClick={() => handleQuickReply(reply)}
+            >
+              {reply}
+            </button>
+          ))}
+        </div>
 
         {/* File Upload Panel */}
         {showFilePanel && <FileUploadPanel onClose={() => setShowFilePanel(false)} />}

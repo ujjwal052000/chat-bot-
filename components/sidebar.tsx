@@ -237,55 +237,30 @@ export default function Sidebar({
                             onDrop={(e) => handleDrop(e, conv.id)}
                           >
                             <div
-                              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                                 currentConversationId === conv.id
-                                  ? "bg-primary text-white"
+                                  ? "bg-primary/10 border border-primary"
                                   : "hover:bg-muted"
                               }`}
                             >
-                              <button
-                                onClick={() => onSelectConversation(conv.id)}
-                                className={`flex-1 text-left text-sm truncate ${
-                                  currentConversationId === conv.id ? "text-white" : "text-foreground"
-                                }`}
-                              >
-                                {conv.title}
-                              </button>
-
-                              {hoveredChatId === conv.id && (
-                                <div className="relative" ref={saveMenuRef}>
-                                  <button
-                                    onClick={() => setShowSaveMenu(showSaveMenu === conv.id ? null : conv.id)}
-                                    className="p-1 hover:bg-muted rounded transition-colors"
-                                  >
-                                    <Save className="w-3 h-3 text-muted-foreground" />
-                                  </button>
-
-                                  {showSaveMenu === conv.id && (
-                                    <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50 min-w-40">
-                                      <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors">
-                                        📁 Saved Files
-                                      </button>
-                                      <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                                        🖼️ Photos
-                                      </button>
-                                      <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                                        💬 Chats
-                                      </button>
-                                      <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                                        🎥 Videos
-                                      </button>
-                                    </div>
-                                  )}
+                              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold text-lg shrink-0 mr-2">CB</div>
+                              <div className="flex-1 overflow-hidden">
+                                <button
+                                  onClick={() => onSelectConversation(conv.id)}
+                                  className={`w-full text-left text-sm truncate text-foreground font-medium ${currentConversationId === conv.id ? "font-semibold" : ""}`}
+                                >
+                                  {conv.title}
+                                </button>
+                                <div className="text-xs text-muted-foreground overflow-hidden whitespace-nowrap text-ellipsis max-w-[110px] md:max-w-[200px] mt-0.5">
+                                  {conv.messages && conv.messages.length > 0 ? conv.messages[conv.messages.length-1].content : ''}
                                 </div>
-                              )}
-
+                              </div>
                               {hoveredChatId === conv.id && (
                                 <button
                                   onClick={() => onDeleteConversation(conv.id)}
                                   className="p-1 hover:bg-red-500/20 rounded transition-colors"
                                 >
-                                  <X className={`w-3 h-3 ${currentConversationId === conv.id ? "text-white" : "text-red-500"}`} />
+                                  <X className="w-3 h-3 text-red-500" />
                                 </button>
                               )}
                             </div>
@@ -308,55 +283,30 @@ export default function Sidebar({
                   onDrop={(e) => handleDrop(e, conv.id)}
                 >
                   <div
-                    className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                       currentConversationId === conv.id
-                        ? "bg-primary text-white"
+                        ? "bg-primary/10 border border-primary"
                         : "hover:bg-muted"
                     }`}
                   >
-                    <button
-                      onClick={() => onSelectConversation(conv.id)}
-                      className={`flex-1 text-left text-sm truncate ${
-                        currentConversationId === conv.id ? "text-white" : "text-foreground"
-                      }`}
-                    >
-                      {conv.title}
-                    </button>
-
-                    {hoveredChatId === conv.id && (
-                      <div className="relative" ref={saveMenuRef}>
-                        <button
-                          onClick={() => setShowSaveMenu(showSaveMenu === conv.id ? null : conv.id)}
-                          className="p-1 hover:bg-muted rounded transition-colors"
-                        >
-                          <Save className="w-3 h-3 text-muted-foreground" />
-                        </button>
-
-                        {showSaveMenu === conv.id && (
-                          <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50 min-w-40">
-                            <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors">
-                              📁 Saved Files
-                            </button>
-                            <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                              🖼️ Photos
-                            </button>
-                            <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                              💬 Chats
-                            </button>
-                            <button className="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted transition-colors border-t border-border">
-                              🎥 Videos
-                            </button>
-                          </div>
-                        )}
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary font-bold text-lg shrink-0 mr-2">CB</div>
+                    <div className="flex-1 overflow-hidden">
+                      <button
+                        onClick={() => onSelectConversation(conv.id)}
+                        className={`w-full text-left text-sm truncate text-foreground font-medium ${currentConversationId === conv.id ? "font-semibold" : ""}`}
+                      >
+                        {conv.title}
+                      </button>
+                      <div className="text-xs text-muted-foreground overflow-hidden whitespace-nowrap text-ellipsis max-w-[110px] md:max-w-[200px] mt-0.5">
+                        {conv.messages && conv.messages.length > 0 ? conv.messages[conv.messages.length-1].content : ''}
                       </div>
-                    )}
-
+                    </div>
                     {hoveredChatId === conv.id && (
                       <button
                         onClick={() => onDeleteConversation(conv.id)}
                         className="p-1 hover:bg-red-500/20 rounded transition-colors"
                       >
-                        <X className={`w-3 h-3 ${currentConversationId === conv.id ? "text-white" : "text-red-500"}`} />
+                        <X className="w-3 h-3 text-red-500" />
                       </button>
                     )}
                   </div>
